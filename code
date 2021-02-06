@@ -1,0 +1,39 @@
+iF iv_event_id->mv_event_id = 'ZCALL_ZCLIENTES'.
+
+IMPORT lv_click TO lv_click FROM MEMORY ID 'ZMEMO_CLICK'.
+
+lv_click = lv_click + 1.
+
+IF lv_click = 1.
+
+* Get Web Dynpro Appplication URL
+
+CALL METHOD cl_wd_utilities=>construct_wd_url
+
+EXPORTING
+
+application_name = 'ZWD_TM_CLIENTES' " Application Name
+
+IMPORTING
+
+out_absolute_url = lv_url.
+
+DATA lo_navigate_to TYPE REF TO if_fpm_navigate_to.
+
+lo_navigate_to = mo_fpm->get_navigate_to( ).
+
+lv_launch-url = lv_url.
+
+lv_launch-header_text = 'header text'.
+
+ls_params-window_features = 'directories=yes,location=yes,menubar=yes,status=yes,titlebar=yes,toolbar=yes'.
+
+lo_navigate_to->launch_url( is_url_fields = lv_launch is_additional_parameters = ls_params ).
+
+lv_click = lv_click + 1.
+
+EXPORT lv_click FROM lv_click TO MEMORY ID 'ZMEMO_CLICK'.
+
+ENDIF.
+
+ENDIF.
