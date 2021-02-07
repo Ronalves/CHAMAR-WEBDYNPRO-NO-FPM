@@ -1,39 +1,29 @@
-iF iv_event_id->mv_event_id = 'ZCALL_ZCLIENTES'.
 
-IMPORT lv_click TO lv_click FROM MEMORY ID 'ZMEMO_CLICK'.
+fiz no /BOFU/IF_FBI_VIEW_EXITINTF_RUN~ADAPT_EVENT por que no adapt data chama muitas vezes
 
-lv_click = lv_click + 1.
+CASE IV_EVENTID.
+  WHEN 'ZFLUXO_DOCOV'.
 
-IF lv_click = 1.
+        DATA:lv_url TYPE string,
+             lv_launch TYPE FPM_S_LAUNCH_URL,
+             ls_params TYPE APB_LPD_S_PORTAL_PARAMETERS.
 
-* Get Web Dynpro Appplication URL
+        CALL METHOD cl_wd_utilities=>construct_wd_url
+          EXPORTING
+            application_name = 'ZTMWFLDOC' " Application Name
+          IMPORTING
+            out_absolute_url = lv_url.
 
-CALL METHOD cl_wd_utilities=>construct_wd_url
+        DATA lo_navigate_to TYPE REF TO if_fpm_navigate_to.
 
-EXPORTING
+        lo_navigate_to = mo_controller->mo_fpm->get_navigate_to( ).
 
-application_name = 'ZWD_TM_CLIENTES' " Application Name
+        lv_launch-url = lv_url.
 
-IMPORTING
+        lv_launch-header_text = 'header text'.
 
-out_absolute_url = lv_url.
+        ls_params-window_features = 'directories=yes,location=yes,menubar=yes,status=yes,titlebar=yes,toolbar=yes'.
 
-DATA lo_navigate_to TYPE REF TO if_fpm_navigate_to.
+        lo_navigate_to->launch_url( is_url_fields = lv_launch is_additional_parameters = ls_params ).
 
-lo_navigate_to = mo_fpm->get_navigate_to( ).
-
-lv_launch-url = lv_url.
-
-lv_launch-header_text = 'header text'.
-
-ls_params-window_features = 'directories=yes,location=yes,menubar=yes,status=yes,titlebar=yes,toolbar=yes'.
-
-lo_navigate_to->launch_url( is_url_fields = lv_launch is_additional_parameters = ls_params ).
-
-lv_click = lv_click + 1.
-
-EXPORT lv_click FROM lv_click TO MEMORY ID 'ZMEMO_CLICK'.
-
-ENDIF.
-
-ENDIF.
+ENDCASE.
